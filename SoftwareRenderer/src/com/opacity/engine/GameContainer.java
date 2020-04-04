@@ -2,15 +2,21 @@ package com.opacity.engine;
 
 public class GameContainer implements Runnable {
 	private Thread thread;
+	private Window window;
 
 	private boolean running = false;
 	private final double UPDATE_CAP = 1.0 / 60.0;
+	private int width = 320, height = 240;
+	private float scale = 4f;
+	private String title = "Software Renderer";
 
 	public GameContainer() {
 
 	}
 
 	public void start() {
+		window = new Window(this);
+		
 		thread = new Thread(this, "Main Thread");
 		thread.run();
 	}
@@ -57,6 +63,7 @@ public class GameContainer implements Runnable {
 			
 			if (render) {
 				// TODO Render the game
+				window.update();
 				frames++;
 			} else {
 				try {
@@ -77,5 +84,37 @@ public class GameContainer implements Runnable {
 	public static void main(String args[]) {
 		GameContainer gc = new GameContainer();
 		gc.start();
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }
