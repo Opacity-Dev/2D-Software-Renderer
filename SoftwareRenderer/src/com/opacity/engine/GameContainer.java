@@ -1,9 +1,12 @@
 package com.opacity.engine;
 
+import java.awt.event.KeyEvent;
+
 public class GameContainer implements Runnable {
 	private Thread thread;
 	private Window window;
 	private Renderer renderer;
+	private Input input;
 
 	private boolean running = false;
 	private final double UPDATE_CAP = 1.0 / 60.0;
@@ -18,7 +21,8 @@ public class GameContainer implements Runnable {
 	public void start() {
 		window = new Window(this);
 		renderer = new Renderer(this);
-		
+		input = new Input(this);
+
 		thread = new Thread(this, "Main Thread");
 		thread.run();
 	}
@@ -29,32 +33,35 @@ public class GameContainer implements Runnable {
 
 	public void run() {
 		running = true;
-		
+
 		boolean render = false;
 		double firstTime = 0;
 		double lastTime = System.nanoTime() / 1000000000.0;
 		double passedTime = 0;
 		double unprocessedTime = 0;
-		
+
 		double frameTime = 0;
 		int frames = 0; // Frames passed
 		int fps = 0; // Frames per second
-		
+
 		while (running) {
 			render = false;
-			
+
 			firstTime = System.nanoTime() / 1000000000.0;
 			passedTime = firstTime - lastTime;
 			lastTime = firstTime;
-			
+
 			unprocessedTime += passedTime;
 			frameTime += passedTime;
-			
+
 			while (unprocessedTime >= UPDATE_CAP) {
 				unprocessedTime -= UPDATE_CAP;
 				render = true;
-				
+
 				// TODO Update the game
+
+				input.update();
+
 				if (frameTime >= 1.0) {
 					frameTime = 0;
 					fps = frames;
@@ -62,7 +69,7 @@ public class GameContainer implements Runnable {
 					System.out.println("New FPS: " + fps);
 				}
 			}
-			
+
 			if (render) {
 				renderer.clear();
 				// TODO Render the game
@@ -76,14 +83,14 @@ public class GameContainer implements Runnable {
 				}
 			}
 		}
-		
+
 		dispose();
 	}
 
 	private void dispose() {
 
 	}
-	
+
 	public static void main(String args[]) {
 		GameContainer gc = new GameContainer();
 		gc.start();
